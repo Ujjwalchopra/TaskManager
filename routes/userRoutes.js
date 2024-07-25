@@ -12,35 +12,40 @@ router.get('/', (req, res) => {
 })
 
 //register the user
+
 router.post('/register', async (req, res) => {
     try {
-        const { name, email, password } = req.body;
+    const { name, email, password } = req.body;
+
         const user = new User({ name, email, password });
         await user.save();
-        res.status(201).send({ user, message: "user created successfully" });
-    } catch (error) {
-        res.status(400).send({ error: error });
+        res.status(201).send({ user, message: "User Created Successfully" });
     }
-})
+
+    catch (err) {
+        res.status(400).send("user not created "+ err);
+    }
+
+});
 
 //login a user
 router.post('/login', async (req, res) => {
     try {
-        const { emai, password } = req.body;
+        const { email, password } = req.body;
         const user = await User.findOne({ email });
         if (!user) {
-            throw new Error('Unable to login,invalid credentials');
+            throw new Error("Unable to login,invalid credentials");
         }
         const isMatch = await bcrypt.compare(password, user.password)
         if (!isMatch) {
-            throw new Error('Unable to login,invalid password');
+            throw new Error("Unable to login,invalid password");
         }
         const token = jwt.sign({
             _id: user._id.toString()
         }, process.env.JWT_SECRET_KEY)
-        res.send({ user, token, message: 'User loggedin successfully' })
+        res.send({ user, token, message: "User loggedin successfully" })
     } catch (error) {
-        res.status(400).send({ error: error });
+        res.status(400).send({ message: error });
     }
 })
 

@@ -9,6 +9,7 @@ import './db.js';
 const app= express();
 
 app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
 const PORT = process.env.PORT;
 app.use('/users',userrouter)
 app.use('/tasks',taskrouter)
